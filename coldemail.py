@@ -38,7 +38,13 @@ with st.sidebar:
     if not api_key:
         st.error(f"⚠️ {llm_provider.upper()}_API_KEY not set")
 
-st.header("🏢 Your Agency Services")
+st.header("🏢 Your Information")
+
+your_name = st.text_input("Your Name", placeholder="John Doe")
+your_title = st.text_input("Your Title", placeholder="Founder & CEO")
+your_company = st.text_input("Your Company", placeholder="Acme Agency")
+
+st.header("📋 Your Agency Services")
 agency_services = st.text_area(
     "Describe your services",
     value="""1. SEO Optimization Service: Best for companies with good products but low traffic. We increase organic reach.
@@ -54,7 +60,7 @@ target_url = st.text_input(
     value="https://github.com/"
 )
 
-def generate_cold_email(target_url, agency_services, model, api_key):
+def generate_cold_email(target_url, agency_services, your_name, your_title, your_company, model, api_key):
     llm = LLM(model=model, api_key=api_key)
     scrape_tool = ScrapeWebsiteTool()
     
@@ -101,8 +107,10 @@ You must pick the SINGLE best service for this specific client.""",
         agent=strategist
     )
     
+    sender_info = f"From: {your_name}, {your_title} at {your_company}" if your_name and your_company else ""
+    
     task_write = Task(
-        description="Draft a cold email to the CEO. Pitch the service. Under 150 words.",
+        description=f"Draft a cold email to the CEO. {sender_info} Pitch the service. Under 150 words.",
         expected_output="Professional cold email.",
         agent=writer
     )
@@ -124,7 +132,7 @@ if st.button("🚀 Generate Cold Email", type="primary", use_container_width=Tru
     else:
         with st.spinner("🤖 AI agents are working..."):
             try:
-                result = generate_cold_email(target_url, agency_services, model, api_key)
+                result = generate_cold_email(target_url, agency_services, your_name, your_title, your_company, model, api_key)
                 
                 st.success("✅ Cold email generated!")
                 st.markdown("---")
