@@ -46,18 +46,15 @@ your_company = st.text_input("Your Company", placeholder="Acme Agency")
 
 st.header("📋 Your Agency Services")
 agency_services = st.text_area(
-    "Describe your services",
-    value="""1. SEO Optimization Service: Best for companies with good products but low traffic. We increase organic reach.
-2. Custom Web Development: Best for companies with outdated, ugly, or slow websites. We build modern React/Python sites.
-3. AI Automation: Best for companies with manual, repetitive tasks. We build agents to save time.""",
+    "Describe your services (one per line)",
+    placeholder="1. SEO Optimization - Increase organic traffic\n2. Web Development - Modern websites\n3. AI Automation - Save time with agents",
     height=150
 )
 
 st.header("🎯 Target Company")
 target_url = st.text_input(
     "Company website URL",
-    placeholder="https://example.com",
-    value="https://github.com/"
+    placeholder="https://example.com"
 )
 
 def generate_cold_email(target_url, agency_services, your_name, your_title, your_company, model, api_key):
