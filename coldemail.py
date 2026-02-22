@@ -80,7 +80,7 @@ def generate_cold_email(target_url, agency_services, your_name, your_title, your
         backstory="You are an expert at analyzing businesses just by looking at their landing page.",
         tools=[scrape_tool],
         verbose=True,
-        allow_delegation=True,
+        allow_delegation=False,
         memory=True,
         llm=llm
     )
