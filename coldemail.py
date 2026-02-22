@@ -37,6 +37,12 @@ with st.sidebar:
     
     if not api_key:
         st.error(f"⚠️ {llm_provider.upper()}_API_KEY not set")
+    
+    st.divider()
+    st.header("📧 Email Account")
+    
+    email_address = st.text_input("Email Address", placeholder="you@company.com", type="default")
+    email_password = st.text_input("Email Password", placeholder="••••••••", type="password")
 
 st.header("🏢 Your Information")
 
@@ -111,6 +117,34 @@ You must pick the SINGLE best service for this specific client.""",
         agent=strategist
     )
     
+    sender_profile_agent = Agent(
+        role='Sender Profile Specialist',
+        goal='Craft compelling sender introduction from raw info',
+        backstory="You transform basic name/title/company into a credible, professional sender profile that builds trust.",
+        verbose=True,
+        llm=llm
+    )
+    
+    services_agent = Agent(
+        role='Services Optimizer',
+        goal='Reframe services to match prospect needs',
+        backstory="You take raw service descriptions and reframe them to be benefit-focused and compelling for cold outreach.",
+        verbose=True,
+        llm=llm
+    )
+    
+    task_sender = Task(
+        description=f"Create a professional sender intro from: Name={your_name}, Title={your_title}, Company={your_company}. Output: 1 sentence signature block.",
+        expected_output="Professional sender signature line.",
+        agent=sender_profile_agent
+    )
+    
+    task_services = Task(
+        description=f"Optimize these services for cold email: {agency_services}. Make them benefit-focused and concise.",
+        expected_output="3 compelling service descriptions.",
+        agent=services_agent
+    )
+    
     sender_info = f"From: {your_name}, {your_title} at {your_company}" if your_name and your_company else ""
     
     task_write = Task(
@@ -120,8 +154,8 @@ You must pick the SINGLE best service for this specific client.""",
     )
     
     crew = Crew(
-        agents=[researcher, strategist, writer],
-        tasks=[task_analyze, task_strategize, task_write],
+        agents=[researcher, strategist, sender_profile_agent, services_agent, writer],
+        tasks=[task_analyze, task_strategize, task_sender, task_services, task_write],
         process=Process.sequential,
         verbose=True
     )
