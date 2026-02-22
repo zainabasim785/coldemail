@@ -61,7 +61,14 @@ target_url = st.text_input(
 )
 
 def generate_cold_email(target_url, agency_services, your_name, your_title, your_company, model, api_key):
-    llm = LLM(model=model, api_key=api_key)
+    import litellm
+    litellm.set_verbose = False
+    
+    llm = LLM(
+        model=model,
+        api_key=api_key,
+        temperature=0.7
+    )
     scrape_tool = ScrapeWebsiteTool()
     
     researcher = Agent(
