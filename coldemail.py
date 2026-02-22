@@ -1,7 +1,14 @@
 import os
-import time
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 from crewai_tools import ScrapeWebsiteTool
+from dotenv import load_dotenv
+
+load_dotenv()
+
+llm = LLM(
+    model="groq/llama-3.3-70b-versatile",
+    api_key=os.getenv("GROQ_API_KEY")
+)
 
 
 agency_services = """
@@ -20,6 +27,7 @@ researcher = Agent(
     verbose=True,
     allow_delegation=True,
     memory=True,
+    llm=llm
 )
 
 strategist = Agent(
@@ -33,7 +41,8 @@ OUR SERVICES KNOWLEDGE BASE:
 
 You must pick the SINGLE best service for this specific client and explain why.""",
     verbose=True,
-    memory=True
+    memory=True,
+    llm=llm
 )
 
 writer = Agent(
@@ -41,12 +50,11 @@ writer = Agent(
     goal='Write a personalized cold email that sounds human and professional.',
     backstory="""You write emails that get replies. You never sound robotic.
 You mention specific details found by the Researcher to prove we actually looked at their site.""",
-    verbose=True
+    verbose=True,
+    llm=llm
 )
 
 
-
-target_url = "https://openai.com/"
 def create_crew(target_url):
 
     task_analyze = Task(
