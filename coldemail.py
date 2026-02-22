@@ -114,6 +114,8 @@ You must pick the SINGLE best service for this specific client.""",
         agent=strategist
     )
     
+    sender_info = f"From: {your_name}, {your_title} at {your_company}" if your_name and your_company else ""
+    
     task_write = Task(
         description=f"Draft a cold email to the CEO. {sender_info} Pitch the service. Under 150 words.",
         expected_output="Professional cold email.",
